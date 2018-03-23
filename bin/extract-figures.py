@@ -133,7 +133,8 @@ if __name__ == "__main__":
 
     try:
         extractor = FigureExtractor(**params)
-
+        print("MADE EXTRACTOR")
+        
         if args.interactive:
             display_images(extractor, args.files)
         else:

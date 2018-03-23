@@ -71,6 +71,7 @@ class FigureExtractor(object):
                  min_area=0.01,
                  min_height=0.1, max_height=0.9,
                  min_width=0.1, max_width=0.9):
+
         # TODO: reconsider whether we should split to global config + per-image extractor instances
 
         # TODO: better way to set configuration options & docs
@@ -85,6 +86,12 @@ class FigureExtractor(object):
         self.max_height = max_height
         self.min_width = min_width
         self.max_width = max_width
+
+        if cv2.__version__.startswith('2.'):
+            self.find_contours = self._find_contours_opencv2
+        else:
+            self.find_contours = self._find_contours_opencv3
+
 
     def find_figures(self, source_image):
         assert source_image is not None, "source_image was None. Perhaps imread() failed?"
@@ -102,10 +109,6 @@ class FigureExtractor(object):
         _, a, b = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         return a, b
 
-    if cv2.__version__.startswith('2.'):
-        find_contours = _find_contours_opencv2
-    else:
-        find_contours = _find_contours_opencv3
 
     def filter_image(self, source_image):
         # TODO: Refactor this into a more reusable filter chain
